@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Web app edukasi untuk memahami hasil laboratorium, estimasi eGFR, BMI, tekanan darah, dan riwayat pemeriksaan. Bukan pengganti konsultasi dokter.">
+<meta name="theme-color" content="#0f7b6c">
+<title>Analisis Lab & Konsultasi</title>
+
+<style>
+:root{color-scheme:light dark;--bg:#f2f8f6;--cd:#fff;--tx:#16302b;--mu:#5b736e;--pr:#0f7b6c;--pb:#dff3ee;--bd:#d6e4e0;--g:#1b8a54;--gb:#e1f5ea;--y:#a76a05;--yb:#fff2d2;--r:#c02f2f;--rb:#fde6e6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1917;--cd:#1625;--cd:#162522;--tx:#e3f0ed;--mu:#97b0aa;--pr:#4fc7b2;--pb:#173a34;--bd:#274039;--g:#5bd194;--gb:#16382a;--y:#f0b94d;--yb:#3d3010;--r:#ff8a8a;--rb:#43191a}}
+:root[data-theme="dark"]{--bg:#0e1917;--cd:#162522;--tx:#e3f0ed;--mu:#97b0aa;--pr:#4fc7b2;--pb:#173a34;--bd:#274039;--g:#5bd194;--gb:#16382a;--y:#f0b94d;--yb:#3d3010;--r:#ff8a8a;--rb:#43191a}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:680px;margin:0 auto;padding:16px 16px 40px}
+header{background:linear-gradient(135deg,#0f7b6c,#17a68f);color:#fff;border-radius:18px;padding:18px 18px 16px;margin-bottom:14px}
+header h1{margin:0;font-size:1.3rem}header p{margin:4px 0 0;font-size:.85rem;opacity:.92}
+.st{display:flex;gap:6px;margin:0 0 14px}.st div{flex:1;text-align:center;font-size:.75rem;color:var(--mu);border-bottom:3px solid var(--bd);padding-bottom:6px}.st .on{color:var(--pr);border-color:var(--pr);font-weight:600}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:12px}
+h2{font-size:1.1rem;margin:0 0 12px}label{display:block;font-size:.85rem;color:var(--mu);margin:10px 0 4px}
+input,select{width:100%;padding:11px 12px;border:1.5px solid var(--bd);border-radius:10px;font:inherit;background:var(--bg);color:var(--tx)}input:focus{outline:2px solid var(--pr);border-color:transparent}input.bad{border-color:var(--r)}
+.sx{display:flex;gap:8px}.sx button{flex:1}
+button{font:inherit;border:1.5px solid var(--pr);background:transparent;color:var(--pr);padding:11px 14px;border-radius:10px;cursor:pointer}
+button.p,button.sel{background:var(--pr);color:#fff}[data-theme="dark"] button.p{color:#06201b}
+.nav{display:flex;gap:8px;margin-top:14px}.nav button{flex:1}
+.row{display:grid;grid-template-columns:1fr 112px;gap:4px 10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)}.row:last-child{border:0}
+.row b{font-weight:600}.row small{display:block;color:var(--mu);font-size:.78rem}
+.gh{font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--pr);margin:14px 0 2px;font-weight:700}
+.err{color:var(--r);font-size:.85rem;margin-top:8px;min-height:1px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.chip{padding:5px 12px;border-radius:99px;font-size:.85rem;font-weight:600}
+.g{background:var(--gb);color:var(--g)}.y{background:var(--yb);color:var(--y)}.r{background:var(--rb);color:var(--r)}
+.it{border-left:5px solid;border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--bg)}.it.g{border-color:var(--g)}.it.y{border-color:var(--y)}.it.r{border-color:var(--r)}
+.it .h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.it .h span{font-size:.78rem;padding:2px 9px;border-radius:99px;font-weight:600}
+.it p{margin:4px 0 0;font-size:.88rem;color:var(--mu)}
+.ad{background:var(--pb);border-radius:12px;padding:12px 14px;margin:8px 0;font-size:.92rem}.ad b{display:block;margin-bottom:2px}
+#log{max-height:340px;overflow:auto;margin-bottom:10px}.m{padding:9px 12px;border-radius:12px;margin:6px 0;white-space:pre-wrap;font-size:.93rem}.m.u{background:var(--pr);color:#fff;margin-left:18%}[data-theme="dark"] .m.u{color:#06201b}.m.a{background:var(--pb);margin-right:8%}
+.qs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.qs button{font-size:.8rem;padding:6px 10px;border-radius:99px}
+.cr{display:flex;gap:8px}.cr input{flex:1}.cr button{flex:none}
+.ds{font-size:.78rem;color:var(--mu);text-align:center;margin-top:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bmi{margin:10px 0;min-height:4px}
+.tw{overflow-x:auto}table{border-collapse:collapse;font-size:.82rem;width:100%}th,td{padding:6px 9px;border-bottom:1px solid var(--bd);text-align:center;white-space:nowrap}th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--cd)}
+@media print{header,.nav,#chat,.st,#shr,#svc{display:none}body{background:#fff}}
+</style></head><body><div class="w">
+<header><h1>Analisis Lab & Konsultasi</h1><p>Memahami hasil laboratorium dengan tenang dan sederhana<br>Portal edukasi kesehatan • Interpretasi awal hasil pemeriksaan</p></header>
+<div class="st" id="st"></div><div id="app"></div>
+<p class="ds">Aplikasi ini bersifat edukasi dan tidak menggantikan pemeriksaan serta nasihat dokter. Nilai rujukan umum untuk dewasa; nilai di laboratorium Anda dapat sedikit berbeda.</p>
+</div>
+<script>
+const G={darah:"Darah",gula:"Gula darah",lemak:"Lemak darah",hati:"Hati & empedu",ginjal:"Ginjal & asam urat",elek:"Elektrolit",tiroid:"Tiroid",besi:"Status besi",mineral:"Mineral & tulang"};
+// id,label,unit,rujukan L,rujukan P,toleransi,grup,tafsir tinggi,tafsir rendah
+const P=[
+["leu","Leukosit","10³/µL",[4,11],[4,11],.15,"darah","Sel darah putih tinggi; sering menandakan infeksi, peradangan, atau stres fisik.","Sel darah putih rendah; dapat terkait infeksi virus, obat tertentu, atau penurunan produksi sel darah."],
+["hb","Hemoglobin","g/dL",[13,17],[12,15],.12,"darah","Hemoglobin tinggi; bisa karena dehidrasi, merokok, atau tinggal di dataran tinggi.","Hemoglobin rendah (anemia); dapat karena kurang zat besi, perdarahan, atau penyakit kronis."],
+["plt","Trombosit","10³/µL",[150,400],[150,400],.2,"darah","Trombosit tinggi; sering reaktif akibat peradangan atau kekurangan zat besi.","Trombosit rendah; dapat karena infeksi (mis. demam berdarah), obat, atau gangguan imun."],
+["gdp","Gula darah puasa","mg/dL",[70,100],[70,100],.15,"gula","Gula puasa di atas normal; 100–125 disebut prediabetes, ≥126 mengarah ke diabetes.","Gula darah rendah; dapat karena terlambat makan atau efek obat diabetes."],
+["gd2","Gula darah 2 jam PP","mg/dL",[null,140],[null,140],.15,"gula","Gula 2 jam setelah makan tinggi; 140–199 prediabetes, ≥200 mengarah ke diabetes.","Gula darah rendah."],
+["gda","Gula darah sewaktu","mg/dL",[null,200],[null,200],.15,"gula","Gula sewaktu ≥200 perlu evaluasi lebih lanjut untuk diabetes.","Gula darah rendah."],
+["hba1c","HbA1c","%",[null,5.6],[null,5.6],.1,"gula","Rata-rata gula 2–3 bulan terakhir; 5,7–6,4 prediabetes, ≥6,5 mengarah ke diabetes.","Nilai rendah."],
+["bun","BUN (ureum nitrogen)","mg/dL",[7,20],[7,20],.2,"ginjal","BUN tinggi; dapat karena dehidrasi, banyak protein, atau penurunan fungsi ginjal.","BUN rendah; biasanya akibat asupan protein sedikit atau banyak cairan."],
+["cr","Serum kreatinin","mg/dL",[0.7,1.3],[0.6,1.1],.15,"ginjal","Kreatinin tinggi; dapat mencerminkan penurunan fungsi ginjal, dehidrasi, atau massa otot besar. Sebaiknya dihitung eGFR dan dikonfirmasi dokter.","Kreatinin rendah; umumnya karena massa otot kecil dan biasanya tidak bermakna."],
+["sgot","SGOT (AST)","U/L",[null,40],[null,35],.25,"hati","Enzim hati/otot naik; bisa karena hati berlemak, obat, alkohol, atau olahraga berat.","Nilai rendah."],
+["sgpt","SGPT (ALT)","U/L",[null,41],[null,33],.25,"hati","Enzim hati naik; penyebab tersering hati berlemak, obat/jamu, atau hepatitis.","Nilai rendah."],
+["alb","Albumin","g/dL",[3.5,5.2],[3.5,5.2],.1,"hati","Albumin tinggi; umumnya karena dehidrasi.","Albumin rendah; dapat terkait gizi kurang, penyakit hati, ginjal, atau peradangan kronis."],
+["ua","Asam urat","mg/dL",[3.4,7],[2.4,6],.15,"ginjal","Asam urat tinggi; berisiko memicu nyeri sendi (gout) dan batu ginjal.","Asam urat rendah; biasanya tidak bermakna."],
+["kol","Kolesterol total","mg/dL",[null,200],[null,200],.15,"lemak","Kolesterol total tinggi; meningkatkan risiko penyakit jantung dan pembuluh darah.","Nilai rendah."],
+["ldl","LDL (kolesterol jahat)","mg/dL",[null,100],[null,100],.2,"lemak","LDL di atas target; makin tinggi, makin besar risiko plak di pembuluh darah.","Nilai rendah."],
+["hdl","HDL (kolesterol baik)","mg/dL",[40,null],[50,null],.15,"lemak","HDL tinggi.","HDL rendah; kurang pelindung bagi pembuluh darah, bisa diperbaiki dengan olahraga."],
+["tg","Trigliserida","mg/dL",[null,150],[null,150],.2,"lemak","Trigliserida tinggi; sering terkait gula/karbohidrat berlebih, alkohol, dan berat badan berlebih.","Nilai rendah."],
+["na","Natrium (Na)","mmol/L",[135,145],[135,145],.03,"elek","Natrium tinggi; sering karena kurang minum/dehidrasi.","Natrium rendah; dapat karena kelebihan cairan, obat, atau kehilangan cairan."],
+["k","Kalium (K)","mmol/L",[3.5,5.1],[3.5,5.1],.08,"elek","Kalium tinggi; penting dikonfirmasi karena memengaruhi irama jantung.","Kalium rendah; dapat karena muntah/diare, obat diuretik, atau asupan kurang."],
+["ca","Kalsium (Ca)","mg/dL",[8.6,10.2],[8.6,10.2],.06,"elek","Kalsium tinggi; dapat terkait kelenjar paratiroid, vitamin D berlebih, atau dehidrasi.","Kalsium rendah; dapat terkait kadar albumin, vitamin D, atau ginjal."],
+["bild","Bilirubin direk","mg/dL",[null,0.3],[null,0.3],.3,"hati","Bilirubin direk naik; perlu dicari kemungkinan gangguan saluran empedu atau hati.","Nilai rendah."],
+["bilt","Bilirubin total","mg/dL",[null,1.2],[null,1.2],.3,"hati","Bilirubin total naik; bisa dari hati, empedu, atau pemecahan sel darah merah.","Nilai rendah."],
+["tsh","TSH","µIU/mL",[0.4,4],[0.4,4],.3,"tiroid","TSH tinggi; sering menandakan tiroid kurang aktif (hipotiroid) dan perlu dinilai bersama FT4.","TSH rendah; dapat menandakan tiroid terlalu aktif (hipertiroid) atau efek obat, perlu dinilai bersama FT4."],
+["ft4","FT4","ng/dL",[0.8,1.8],[0.8,1.8],.2,"tiroid","FT4 tinggi; mengarah ke hormon tiroid berlebih.","FT4 rendah; mengarah ke hormon tiroid yang kurang."],
+["si","Serum iron (SI)","µg/dL",[65,175],[50,170],.2,"besi","Serum iron tinggi; dapat karena suplemen besi atau kondisi tertentu dan perlu dibaca bersama TIBC dan feritin.","Serum iron rendah; dapat karena kurang zat besi, perdarahan, atau peradangan kronis."],
+["tibc","TIBC","µg/dL",[250,450],[250,450],.2,"besi","TIBC tinggi; sering terjadi saat cadangan besi tubuh kurang.","TIBC rendah; dapat terkait peradangan kronis, penyakit hati, atau gizi kurang."],
+["fos","Fosfat","mg/dL",[2.5,4.5],[2.5,4.5],.15,"mineral","Fosfat tinggi; sering terkait penurunan fungsi ginjal dan perlu dipantau karena memengaruhi tulang dan pembuluh darah.","Fosfat rendah; dapat karena asupan kurang, obat pengikat fosfat berlebih, atau gangguan hormon."],
+["pth","PTH","pg/mL",[15,65],[15,65],.3,"mineral","PTH tinggi; dapat terkait penyakit ginjal, kurang vitamin D, atau gangguan kelenjar paratiroid.","PTH rendah; dapat terkait gangguan kelenjar paratiroid atau kalsium yang tinggi."]
+];
+const AD={
+darah:"Perubahan hitung darah sering bersifat sementara dan banyak penyebabnya bisa diatasi. Istirahat cukup, makan bergizi (protein, zat besi, sayur hijau), lalu bahas dengan dokter.",
+gula:"Gula darah bisa dikendalikan dengan baik. Atur porsi karbohidrat, kurangi minuman manis, jalan kaki sekitar 30 menit hampir setiap hari, dan kontrol rutin.",
+lemak:"Kadar lemak darah bisa membaik dengan pola hidup: perbanyak sayur, buah, dan ikan; kurangi gorengan, santan kental, dan jeroan; rutin bergerak.",
+hati:"Banyak penyebab kelainan hati yang ringan dan dapat pulih. Hindari alkohol serta obat atau jamu tanpa anjuran, jaga berat badan, dan makan seimbang.",
+ginjal:"Minum air putih cukup sesuai anjuran dokter, kurangi garam, dan hindari pereda nyeri berlebihan. Untuk asam urat, batasi jeroan, emping, dan minuman manis.",
+elek:"Elektrolit mudah berubah karena cairan, makanan, atau obat. Tidak perlu panik; sebaiknya dikonfirmasi dan dibahas dengan dokter, terutama bila lemas atau berdebar.",
+tiroid:"Gangguan tiroid umumnya dapat diobati dengan baik. Hasil perlu dinilai bersama keluhan (berdebar, perubahan berat badan, mudah lelah, sensitif suhu) dan pemeriksaan dokter. Jangan mengubah obat tiroid tanpa anjuran.",
+besi:"Kadar besi dan TIBC perlu dibaca bersama hemoglobin dan feritin. Jangan minum suplemen besi sendiri sebelum diperiksa dokter; makanan kaya zat besi (daging, hati ayam, sayur hijau) dapat membantu.",
+mineral:"Fosfat dan PTH berkaitan erat dengan fungsi ginjal dan kesehatan tulang. Batasi makanan tinggi fosfat (minuman bersoda, makanan olahan, keju) dan ikuti anjuran dokter tentang pengikat fosfat atau vitamin D."
+};
+const S={step:1,sex:"L",nama:"",umur:"",tgl:new Date().toISOString().slice(0,10),v:{},chat:[],bb:"",tb:"",sis:"",dia:""};
+const $=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rg=(p,sx=S.sex)=>sx=="L"?p[3]:p[4];
+const rt=r=>r[0]==null?"≤ "+r[1]:r[1]==null?"≥ "+r[0]:r[0]+" – "+r[1];
+const num=s=>{const t=String(s).trim().replace(",",".");return t!==""&&/^\d*\.?\d+$/.test(t)?parseFloat(t):NaN};
+function stat(p,v,sx){const r=rg(p,sx);let d=0,s="n";
+ if(r[0]!=null&&v<r[0]){s="l";d=(r[0]-v)/r[0]}else if(r[1]!=null&&v>r[1]){s="h";d=(v-r[1])/r[1]}
+ return{s,c:s=="n"?"g":d<=p[5]?"y":"r"}}
+function egfr(cr,u,sx){u=num(u);if(!(cr>0)||isNaN(u)||u<18)return null;const f=sx=="P",k=f?.7:.9,a=f?-.241:-.302,q=cr/k;return 142*Math.pow(Math.min(q,1),a)*Math.pow(Math.max(q,1),-1.2)*Math.pow(.9938,u)*(f?1.012:1)}
+const gs_=e=>e>=90?["G1","normal atau tinggi","g"]:e>=60?["G2","penurunan ringan","g"]:e>=45?["G3a","penurunan ringan sampai sedang","y"]:e>=30?["G3b","penurunan sedang sampai berat","y"]:e>=15?["G4","penurunan berat","r"]:["G5","gagal ginjal","r"];
+function imp(R){const c={g:0,y:0,r:0};R.forEach(x=>c[x.c]++);return c.r?'Beberapa nilai cukup menyimpang dari normal; sebaiknya dibahas dengan dokter dalam waktu dekat.':c.y?'Sebagian besar hasil baik; ada beberapa nilai sedikit di luar normal yang umumnya bisa diperbaiki dengan pola hidup dan kontrol berkala.':'Seluruh nilai yang diperiksa dalam rentang normal. Pertahankan pola hidup sehat.'}
+function egl(R){const c=R.find(x=>x.p[0]=='cr'),e=c?egfr(c.v,S.umur,S.sex):null;return e==null?null:{e:Math.round(e),g:gs_(e)}}
+function gl(R){return [...new Set(R.filter(x=>x.s!='n').map(x=>x.p[6]))]}
+const SL={n:'Normal',h:'Tinggi',l:'Rendah'},CL={g:[27,138,84],y:[167,106,5],r:[192,47,47]};
+async function mkpdf(){
+  // PDF dibuat melalui fitur cetak browser agar tidak bergantung pada layanan khusus.
+  window.print();
+}
+const bmi=(b,t)=>{b=num(b);t=num(t);return b>0&&t>0?b/Math.pow(t/100,2):null};
+const bc=x=>x<18.5?['Berat badan kurang','y']:x<23?['Normal','g']:x<25?['Berat badan lebih','y']:x<30?['Obesitas I','r']:['Obesitas II','r'];
+const tc=(s,d)=>s>=140||d>=90?[s>=180||d>=110?'Hipertensi derajat 3':s>=160||d>=100?'Hipertensi derajat 2':'Hipertensi derajat 1','r']:s>=130||d>=85?['Normal-tinggi','y']:s>=120||d>=80?['Normal','g']:['Optimal','g'];
+const CV={g:'var(--g)',y:'var(--y)',r:'var(--r)'};
+function chart(rs,m){const last=rs[rs.length-1];let un,lo=null,hi=null,A,B2=null,P0=null;
+ if(m=='bb'){un='kg';A=rs.map(r=>num(r.w))}
+ else if(m=='bmi'){un='kg/m²';lo=18.5;hi=22.9;A=rs.map(r=>bmi(r.w,r.h)??NaN)}
+ else if(m=='td'){un='mmHg';A=rs.map(r=>num(r.a));B2=rs.map(r=>num(r.d))}
+ else{P0=P.find(p=>p[0]==m);un=P0[2];[lo,hi]=rg(P0,last.s);A=rs.map(r=>r.v[m]??NaN)}
+ const T=rs.map(r=>Date.parse(r.t)),ok=A.map((v,i)=>isNaN(v)?-1:i).filter(i=>i>=0);if(!ok.length)return '';
+ const vs=ok.map(i=>A[i]);if(B2)ok.forEach(i=>{if(!isNaN(B2[i]))vs.push(B2[i])});
+ let mn=Math.min(...vs,lo??Infinity),mx=Math.max(...vs,hi??-Infinity);const pd=(mx-mn||1)*.15;mn=Math.max(0,mn-pd);mx+=pd;
+ const W=320,H=190,l=40,rt_=12,t=14,b=28,ts=ok.map(i=>T[i]),t0=Math.min(...ts),t1=Math.max(...ts);
+ const X=i=>t1==t0?(l+W-rt_)/2:l+(T[i]-t0)/(t1-t0)*(W-l-rt_),Y=v=>t+(mx-v)/(mx-mn)*(H-t-b);
+ let s='';
+ if(lo!=null||hi!=null){const y1=Y(hi??mx),y2=Y(lo??mn);s+=`<rect x="${l}" y="${y1}" width="${W-l-rt_}" height="${y2-y1}" style="fill:var(--gb)"/>`}
+ for(let k=0;k<4;k++){const v=mn+(mx-mn)*k/3,y=Y(v);s+=`<line x1="${l}" x2="${W-rt_}" y1="${y}" y2="${y}" style="stroke:var(--bd)"/><text x="${l-5}" y="${y+3}" text-anchor="end" font-size="9" style="fill:var(--mu)">${+v.toFixed(1)}</text>`}
+ const dc=i=>P0?CV[stat(P0,A[i],rs[i].s).c]:m=='bmi'?CV[bc(A[i])[1]]:m=='td'&&!isNaN(B2[i])?CV[tc(A[i],B2[i])[1]]:'var(--pr)';
+ const pl=(arr,c,col)=>{const q=ok.filter(i=>!isNaN(arr[i]));return `<polyline fill="none" stroke-width="2" points="${q.map(i=>X(i)+','+Y(arr[i])).join(' ')}" style="stroke:${c}"/>`+q.map(i=>`<circle cx="${X(i)}" cy="${Y(arr[i])}" r="4" style="fill:${col(i)}"/><text x="${X(i)}" y="${Y(arr[i])-8}" text-anchor="middle" font-size="9" style="fill:var(--tx)">${+arr[i].toFixed(1)}</text>`).join('')};
+ s+=pl(A,'var(--pr)',dc);if(B2)s+=pl(B2,'var(--y)',()=>'var(--y)');
+ s+=`<text x="${l}" y="${H-8}" font-size="9" style="fill:var(--mu)">${fd(rs[ok[0]].t)}</text><text x="${W-rt_}" y="${H-8}" text-anchor="end" font-size="9" style="fill:var(--mu)">${fd(rs[ok[ok.length-1]].t)}</text>`;
+ const nt=lo!=null||hi!=null?`Area hijau: rentang normal ${rt([lo,hi])} ${un}. `:'';
+ return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img">${s}</svg><small style="color:var(--mu)">${nt}${B2?'Garis tosca: sistolik, kuning: diastolik. ':''}Titik: hijau normal, kuning sedikit di luar normal, merah perlu perhatian.</small>`}
+const K="hl_v1";
+function ld(){try{return JSON.parse(localStorage.getItem(K))||[]}catch(e){return[]}}
+function wr(a){try{localStorage.setItem(K,JSON.stringify(a));return true}catch(e){return false}}
+const key=n=>n.trim().toLowerCase();
+const fd=t=>t.slice(8)+"/"+t.slice(5,7)+"/"+t.slice(2,4);
+function steps(){$("#st").innerHTML=["Identitas","Hasil lab","Interpretasi","Riwayat"].map((t,i)=>`<div class="${S.step==i+1?"on":""}" onclick="nav(${i+1})" style="cursor:pointer">${i+1}. ${t}</div>`).join("")}
+function nav(n){if(S.step==1)sv();if(S.step==2)rd();
+ if(n>1&&(!S.nama.trim()||isNaN(num(S.umur))))n=1;else if(n==3&&!res().length)n=2;go(n)}
+function go(n){S.step=n;render();window.scrollTo(0,0)}
+function render(){steps();[p1,p2,p3,p4][S.step-1]()}
+function p1(){$("#app").innerHTML=`<div class="c"><h2>Identitas pasien</h2>
+<label>Nama</label><input id="nm" value="${esc(S.nama)}" autocomplete="name">
+<label>Umur (tahun)</label><input id="um" inputmode="numeric" value="${esc(S.umur)}">
+<label>Jenis kelamin</label><div class="sx"><button class="${S.sex=="L"?"sel":""}" id="sl">Laki-laki</button><button class="${S.sex=="P"?"sel":""}" id="sp">Perempuan</button></div>
+<label>Tanggal periksa</label><input id="tg" type="date" value="${S.tgl}">
+<div class="gh">Pemeriksaan fisik (opsional)</div>
+<div class="g2"><div><label>Berat badan (kg)</label><input id="bb" inputmode="decimal" value="${esc(S.bb)}"></div><div><label>Tinggi badan (cm)</label><input id="tb" inputmode="decimal" value="${esc(S.tb)}"></div></div>
+<div class="bmi" id="bm"></div>
+<div class="g2"><div><label>Sistolik (mmHg)</label><input id="sy" inputmode="numeric" value="${esc(S.sis)}"></div><div><label>Diastolik (mmHg)</label><input id="di" inputmode="numeric" value="${esc(S.dia)}"></div></div>
+<div class="err" id="er"></div><div class="nav"><button class="p" id="nx">Lanjut</button></div></div>`;
+ const ub=()=>{const b=bmi($("#bb").value,$("#tb").value);$("#bm").innerHTML=b?`<span class="chip ${bc(b)[1]}">BMI ${b.toFixed(1)} - ${bc(b)[0]}</span>`:""};["bb","tb"].forEach(i=>$("#"+i).oninput=ub);ub();
+ $("#sl").onclick=()=>{S.sex="L";sv();p1()};$("#sp").onclick=()=>{S.sex="P";sv();p1()};
+ $("#nx").onclick=()=>{sv();const u=num(S.umur);
+  if(!S.nama.trim())return $("#er").textContent="Nama wajib diisi.";
+  if(isNaN(u)||u<0||u>120)return $("#er").textContent="Umur harus berupa angka 0–120.";
+  const f=(v,a,b)=>String(v).trim()===""||(!isNaN(num(v))&&num(v)>=a&&num(v)<=b),e=m=>$("#er").textContent=m;
+  if(!f(S.bb,2,400))return e("Berat badan harus berupa angka 2–400 kg.");
+  if(!f(S.tb,30,260))return e("Tinggi badan harus berupa angka 30–260 cm.");
+  if(!f(S.sis,50,300)||!f(S.dia,30,200))return e("Tekanan darah harus berupa angka (sistolik 50–300, diastolik 30–200).");
+  if((S.sis.trim()==="")!=(S.dia.trim()===""))return e("Isi sistolik dan diastolik bersamaan.");
+  if(S.sis.trim()!==""&&num(S.sis)<=num(S.dia))return e("Sistolik harus lebih besar dari diastolik.");
+  go(2)}}
+function sv(){if($("#nm")){S.nama=$("#nm").value;S.umur=$("#um").value;S.tgl=$("#tg").value;S.bb=$("#bb").value;S.tb=$("#tb").value;S.sis=$("#sy").value;S.dia=$("#di").value}}
+function p2(){let h="",last="";
+ P.forEach(p=>{if(p[6]!=last){last=p[6];h+=`<div class="gh">${G[last]}</div>`}
+  h+=`<div class="row"><div><b>${p[1]}</b><small>Normal: <span id="r-${p[0]}">${rt(rg(p))}</span> ${p[2]}</small></div><input id="i-${p[0]}" inputmode="decimal" placeholder="${p[2]}" value="${esc(S.v[p[0]]??"")}"></div>`});
+ const u=num(S.umur);
+ $("#app").innerHTML=`<div class="c"><h2>Input hasil lab</h2><small style="color:var(--mu)">Isi parameter yang ada saja. Gunakan angka (koma atau titik).${u<18?" <b>Catatan:</b> nilai rujukan di sini untuk dewasa.":""}</small>${h}<div class="err" id="er"></div><div class="nav"><button id="bk">Kembali</button><button class="p" id="nx">Lihat interpretasi</button></div></div>`;
+ $("#bk").onclick=()=>{rd();go(1)};
+ $("#nx").onclick=()=>{rd();let bad=0,n=0;
+  P.forEach(p=>{const e=$("#i-"+p[0]),t=e.value.trim();e.classList.remove("bad");
+   if(t==="")return;if(isNaN(num(t))){e.classList.add("bad");bad++}else n++});
+  if(bad)return $("#er").textContent="Ada isian yang bukan angka. Periksa kolom bertanda merah.";
+  if(!n)return $("#er").textContent="Isi minimal satu parameter.";
+  S.chat=[];go(3)}}
+function rd(){P.forEach(p=>{const e=$("#i-"+p[0]);if(e)S.v[p[0]]=e.value})}
+function res(){return P.filter(p=>!isNaN(num(S.v[p[0]]??""))&&String(S.v[p[0]]).trim()!=="").map(p=>{const v=num(S.v[p[0]]);return{p,v,...stat(p,v)}})}
+function p3(){const R=res(),c={g:0,y:0,r:0};R.forEach(x=>c[x.c]++);
+ const sk=c.r?"Beberapa nilai cukup menyimpang dari rentang normal. Ini bukan alasan untuk panik, tetapi sebaiknya dibahas dengan dokter dalam waktu dekat agar bisa ditangani sejak dini.":c.y?"Sebagian besar hasil baik. Ada beberapa nilai yang sedikit di luar rentang normal dan umumnya bisa diperbaiki dengan pola hidup serta kontrol berkala.":"Kabar baik: seluruh nilai yang diperiksa berada dalam rentang normal. Pertahankan pola hidup sehat Anda.";
+ const lb={h:"Tinggi",l:"Rendah",n:"Normal"};
+ const items=R.map(x=>`<div class="it ${x.c}"><div class="h"><b>${x.p[1]}: ${esc(S.v[x.p[0]].trim())} ${x.p[2]}</b><span class="${x.c}">${lb[x.s]}</span></div><p>Normal: ${rt(rg(x.p))} ${x.p[2]}${x.s=="n"?" — dalam batas normal.":" — "+(x.s=="h"?x.p[7]:x.p[8])}</p></div>`).join("");
+ const b0=bmi(S.bb,S.tb),hp=String(S.sis).trim()&&String(S.dia).trim(),kb=b0?bc(b0):null,kt=hp?tc(num(S.sis),num(S.dia)):null;
+ const fz=(kb?`<div class="it ${kb[1]}"><div class="h"><b>BMI: ${b0.toFixed(1)} kg/m² (BB ${esc(S.bb)} kg, TB ${esc(S.tb)} cm)</b><span class="${kb[1]}">${kb[0]}</span></div><p>Rujukan Asia-Pasifik untuk dewasa: normal 18,5–22,9.</p></div>`:"")+(kt?`<div class="it ${kt[1]}"><div class="h"><b>Tekanan darah: ${esc(S.sis)}/${esc(S.dia)} mmHg</b><span class="${kt[1]}">${kt[0]}</span></div><p>Rujukan umum: optimal di bawah 120/80 mmHg; hipertensi mulai 140/90 mmHg. Satu kali pengukuran belum cukup untuk diagnosis; ukur ulang saat tenang.</p></div>`:"");
+ const fa=(b0&&b0>=23?`<div class="ad"><b>Berat badan</b>Penurunan berat badan 5–10% secara bertahap sudah membantu gula darah, tekanan darah, dan lemak darah. Atur porsi, kurangi gorengan dan minuman manis, serta bergerak rutin.</div>`:"")+(kt&&kt[1]!="g"?`<div class="ad"><b>Tekanan darah</b>Kurangi garam dan makanan olahan, jaga berat badan, hindari rokok, dan ukur tekanan darah teratur di rumah. Bila tetap tinggi, bahas dengan dokter.</div>`:"");
+ const gs=[...new Set(R.filter(x=>x.s!="n").map(x=>x.p[6]))];
+ const cx=R.find(x=>x.p[0]=="cr"),ev=cx?egfr(cx.v,S.umur,S.sex):null,gg=ev==null?null:gs_(ev),
+ eg=gg?`<div class="it ${gg[2]}"><div class="h"><b>eGFR (CKD-EPI 2021): ${Math.round(ev)} mL/mnt/1,73 m²</b><span class="${gg[2]}">${gg[0]}</span></div><p>Perkiraan fungsi ginjal: ${gg[1]} (normal ≥ 90). Nilai ini hanya perkiraan; penentuan stadium memerlukan hasil berulang dan penilaian dokter.</p></div>`:cx?'<div class="ad"><b>eGFR</b>Perhitungan eGFR dengan rumus ini hanya untuk usia 18 tahun ke atas.</div>':"";
+ const ad=gs.map(g=>`<div class="ad"><b>${G[g]}</b>${AD[g]}</div>`).join("");
+ $("#app").innerHTML=`<div class="c"><h2>${esc(S.nama)} · ${esc(S.umur)} th · ${S.sex=="L"?"Laki-laki":"Perempuan"}</h2><small style="color:var(--mu)">Diperiksa: ${esc(S.tgl)}</small>
+<div class="chips" style="margin-top:10px"><span class="chip g">${c.g} normal</span><span class="chip y">${c.y} perlu dipantau</span><span class="chip r">${c.r} perlu perhatian</span></div>
+<div class="ad"><b>Kesan keseluruhan</b>${sk}</div>${fz}${items}${eg}</div>
+<div class="c"><h2>Advis untuk Anda</h2>${ad+fa||'<div class="ad">Teruskan kebiasaan baik Anda.</div>'}
+<div class="ad"><b>Umum</b>Tidur cukup, aktif bergerak, makan seimbang, kelola stres, dan lakukan pemeriksaan ulang sesuai anjuran dokter. Satu hasil lab hanyalah satu gambaran; dokter akan menilainya bersama keluhan dan pemeriksaan Anda.</div></div>
+<div class="c" id="chat"><h2>Tanya Panduan Kesehatan</h2><div id="log"></div>
+<div class="qs"><button>Apakah hasil ini berbahaya?</button><button>Makanan apa yang sebaiknya dihindari?</button><button>Kapan perlu kontrol ulang?</button></div>
+<div class="cr"><input id="q" placeholder="Tulis pertanyaan kesehatan Anda…"><button class="p" id="sd">Kirim</button></div><div class="err" id="er"></div></div>
+<div class="c" id="svc"><button class="p" id="sv" style="width:100%">Simpan ke riwayat</button><div class="err" id="sm"></div></div>
+<div class="c" id="shr"><h2>Simpan hasil</h2><button class="p" id="pd" style="width:100%">Cetak / Simpan PDF</button><div class="err" id="pm"></div></div>
+<div class="nav"><button id="bk">Ubah data</button><button id="pr">Cetak</button><button id="nw">Pasien baru</button></div>`;
+ $("#bk").onclick=()=>go(2);$("#pr").onclick=()=>window.print();
+ $("#pd").onclick=async()=>{const m=$("#pm");m.style.color="var(--mu)";m.textContent="Menyiapkan PDF…";try{await mkpdf();m.style.color="var(--g)";m.textContent="PDF siap disimpan."}catch(e){m.style.color="var(--r)";m.textContent=e&&e.code=="declined"?"Penyimpanan dibatalkan.":"PDF belum bisa dibuat di tampilan ini. Coba tombol Cetak, lalu pilih Cetak / Simpan PDF."}};
+ $("#sv").onclick=()=>{const a=ld(),v={};res().forEach(x=>v[x.p[0]]=num(S.v[x.p[0]]));
+  const rec={n:S.nama.trim(),u:S.umur,s:S.sex,t:S.tgl,v,w:S.bb,h:S.tb,a:S.sis,d:S.dia},i=a.findIndex(r=>key(r.n)==key(rec.n)&&r.t==rec.t);
+  if(i>=0)a[i]=rec;else a.push(rec);const ok=wr(a);S.hk=key(rec.n);
+  $("#sm").style.color=ok?"var(--g)":"var(--r)";$("#sm").textContent=ok?"Tersimpan di browser ini. Data tidak tersinkron ke perangkat lain; hindari menyimpan data identitas pada perangkat bersama.":"Gagal menyimpan: penyimpanan browser tidak tersedia."};
+ $("#nw").onclick=()=>{S.v={};S.nama="";S.umur="";S.chat=[];S.bb=S.tb=S.sis=S.dia="";go(1)};
+ $("#sd").onclick=()=>ask($("#q").value);$("#q").onkeydown=e=>{if(e.key=="Enter")ask($("#q").value)};
+ document.querySelectorAll(".qs button").forEach(b=>b.onclick=()=>ask(b.textContent))}
+function p4(){const a=ld(),names=[...new Map(a.map(r=>[key(r.n),r.n])).entries()];
+ if(!names.length){$("#app").innerHTML=`<div class="c"><h2>Riwayat lab</h2><p>Belum ada riwayat. Simpan hasil dari halaman Interpretasi untuk mulai memantau dari waktu ke waktu.</p><div class="nav"><button class="p" id="b1">Mulai input</button></div></div>`;$("#b1").onclick=()=>go(1);return}
+ const cur=S.hk&&names.some(n=>n[0]==S.hk)?S.hk:names[0][0];S.hk=cur;
+ const rs=a.filter(r=>key(r.n)==cur).sort((x,y)=>x.t<y.t?-1:1),last=rs[rs.length-1];
+ const ar=a=>{a=a.filter(x=>!isNaN(x));if(a.length<2)return '';const d=a[a.length-1]-a[a.length-2];return d>0?'↑':d<0?'↓':'→'};
+ const rw=(n,sb,vs,fm,cl)=>vs.some(x=>!isNaN(x))?`<tr><td><b>${n}</b><br><small style="color:var(--mu)">${sb}</small></td>${vs.map(x=>isNaN(x)?'<td>–</td>':`<td class="${cl(x)}">${fm(x)}</td>`).join('')}<td>${ar(vs)}</td></tr>`:'';
+ const W2=rs.map(r=>num(r.w)),BM=rs.map(r=>bmi(r.w,r.h)??NaN),SY=rs.map(r=>num(r.a));
+ let body=rw('Berat badan','kg',W2,x=>x,()=>'')+rw('BMI','18,5–22,9',BM,x=>x.toFixed(1),x=>bc(x)[1]);
+ if(SY.some(x=>!isNaN(x)))body+=`<tr><td><b>Tekanan darah</b><br><small style="color:var(--mu)">mmHg</small></td>${rs.map(r=>{const s=num(r.a),d=num(r.d);return isNaN(s)||isNaN(d)?'<td>–</td>':`<td class="${tc(s,d)[1]}">${s}/${d}</td>`}).join('')}<td>${ar(SY)}</td></tr>`;
+ const av=[];if(BM.some(x=>!isNaN(x)))av.push(['bmi','BMI']);if(W2.some(x=>!isNaN(x)))av.push(['bb','Berat badan']);if(SY.some(x=>!isNaN(x)))av.push(['td','Tekanan darah']);
+ P.forEach(p=>{if(rs.some(r=>r.v[p[0]]!=null))av.push([p[0],p[1]])});
+ const hm=av.some(a=>a[0]==S.hm)?S.hm:(av[0]||[])[0];
+ const cb=av.length?`<div class="gh">Grafik perkembangan</div><select id="gm">${av.map(a=>`<option value="${a[0]}"${a[0]==hm?' selected':''}>${a[1]}</option>`).join('')}</select><div style="margin-top:8px">${chart(rs,hm)}</div>`:'';
+ P.forEach(p=>{const vs=rs.map(r=>r.v[p[0]]),pts=vs.filter(x=>x!=null);if(!pts.length)return;
+  let tr="";if(pts.length>1){const d=pts[pts.length-1]-pts[pts.length-2];tr=d>0?"↑":d<0?"↓":"→"}
+  body+=`<tr><td><b>${p[1]}</b><br><small style="color:var(--mu)">${rt(rg(p,last.s))} ${p[2]}</small></td>${rs.map(r=>{const x=r.v[p[0]];return x==null?"<td>–</td>":`<td class="${stat(p,x,r.s).c}">${x}</td>`}).join("")}<td>${tr}</td></tr>`});
+ const ee=rs.map(r=>r.v.cr==null?null:egfr(r.v.cr,r.u,r.s));if(ee.some(x=>x!=null)){const pe=ee.filter(x=>x!=null);let t2="";if(pe.length>1){const d=pe[pe.length-1]-pe[pe.length-2];t2=d>0?"↑":d<0?"↓":"→"}
+  body+=`<tr><td><b>eGFR</b><br><small style="color:var(--mu)">≥ 90 mL/mnt/1,73 m²</small></td>${ee.map(x=>x==null?"<td>–</td>":`<td class="${gs_(x)[2]}">${Math.round(x)}</td>`).join("")}<td>${t2}</td></tr>`}
+ $("#app").innerHTML=`<div class="c"><h2>Riwayat lab</h2><label>Pasien</label><select id="pf">${names.map(n=>`<option value="${esc(n[0])}"${n[0]==cur?" selected":""}>${esc(n[1])}</option>`).join("")}</select>
+<small style="color:var(--mu)">${rs.length} pemeriksaan · terakhir ${fd(last.t)} · ${last.s=="L"?"laki-laki":"perempuan"}, ${esc(last.u)} th</small>
+<div class="tw" style="margin-top:12px"><table><tr><th>Parameter</th>${rs.map(r=>`<th>${fd(r.t)}</th>`).join("")}<th>Tren</th></tr>${body}</table></div>${cb}
+<small style="color:var(--mu)">Hijau: normal · kuning: sedikit di luar normal · merah: perlu perhatian. Kolom Tren menunjukkan arah perubahan nilai dibanding pemeriksaan sebelumnya: ↑ naik, ↓ turun, → tetap. Panah hanya menunjukkan arah, bukan baik atau buruk; lihat warna selnya. Data tersimpan di browser perangkat ini saja, bukan akun online. Jangan gunakan penyimpanan riwayat pada perangkat umum atau bersama.</small>
+<div class="nav"><button id="br">Kembali</button><button class="p" id="nb">Input hasil baru</button></div>
+<label>Hapus data tanggal</label><div class="cr"><select id="dl">${rs.map(r=>`<option value="${r.t}">${fd(r.t)}</option>`).join("")}</select><button id="dd">Hapus</button></div><div class="err" id="er"></div></div>`;
+ $("#pf").onchange=e=>{S.hk=e.target.value;p4()};
+ if($("#gm"))$("#gm").onchange=e=>{S.hm=e.target.value;p4()};
+ $("#br").onclick=()=>nav(res().length?3:S.nama.trim()?2:1);
+ $("#nb").onclick=()=>{S.nama=last.n;S.umur=last.u;S.sex=last.s;S.v={};S.tb=last.h||"";S.bb="";S.sis="";S.dia="";S.tgl=new Date().toISOString().slice(0,10);go(1)};
+ let ok=0;$("#dd").onclick=()=>{if(!ok){ok=1;$("#dd").textContent="Yakin?";return}
+  wr(ld().filter(r=>!(key(r.n)==cur&&r.t==$("#dl").value)));p4()};
+}
+function ctx(){return "Anda adalah asisten kesehatan yang hangat, menenangkan, namun jujur, di bawah supervisi dr. Puguh Widagdo, SpPD-FINASIM (internis). Jawab dalam bahasa Indonesia sederhana, ringkas (maks. sekitar 150 kata), tanpa membuat diagnosis pasti dan tanpa meresepkan obat atau dosis. Bila perlu, sarankan kontrol ke dokter; bila ada gejala gawat (nyeri dada, sesak, pingsan, kelemahan satu sisi tubuh), sarankan segera ke IGD.\nData pasien: "+S.nama+", "+S.umur+" tahun, "+(S.sex=="L"?"laki-laki":"perempuan")+(()=>{const b=bmi(S.bb,S.tb),h=[];if(!isNaN(num(S.bb)))h.push("BB "+S.bb+" kg");if(!isNaN(num(S.tb)))h.push("TB "+S.tb+" cm");if(b)h.push("BMI "+b.toFixed(1)+" ("+bc(b)[0]+")");if(String(S.sis).trim()&&String(S.dia).trim())h.push("TD "+S.sis+"/"+S.dia+" mmHg ("+tc(num(S.sis),num(S.dia))[0]+")");return h.length?", "+h.join(", "):""})()+". Hasil lab: "+res().map(x=>x.p[1]+" "+S.v[x.p[0]].trim()+" "+x.p[2]+" ("+{n:"normal",h:"tinggi",l:"rendah"}[x.s]+")").join("; ")+(()=>{const c=res().find(x=>x.p[0]=="cr"),e=c&&egfr(c.v,S.umur,S.sex);return e?"; eGFR CKD-EPI "+Math.round(e)+" mL/mnt/1,73 m2":""})()+".\n\nPertanyaan pasien: "}
+async function ask(q){
+ q=(q||"").trim(); if(!q)return; $("#q").value=""; $("#er").textContent="";
+ S.chat.push({role:"user",content:q});
+ const lower=q.toLowerCase();
+ let answer="";
+ if(/nyeri dada|sesak napas|sesak|pingsan|lemah sebelah|wajah mencong|bicara pelo|kejang/.test(lower)){
+   answer="Keluhan yang Anda sebutkan dapat menandakan kondisi gawat. Segera ke IGD atau hubungi layanan darurat setempat. Jangan menunda pertolongan untuk menunggu interpretasi aplikasi.";
+ } else if(/berbahaya|bahaya|gawat|darurat/.test(lower)){
+   const rr=res(); const abnormal=rr.filter(x=>x.s!=="n");
+   answer=abnormal.length?"Ada "+abnormal.length+" parameter di luar rentang rujukan pada data yang dimasukkan. Angka saja belum cukup menentukan apakah kondisi berbahaya; gejala, riwayat, obat, dan rentang rujukan laboratorium perlu dipertimbangkan. Diskusikan hasil dengan dokter. Bila ada nyeri dada, sesak, pingsan, kebingungan, atau kelemahan mendadak, segera ke IGD.":"Parameter yang dimasukkan berada dalam rentang rujukan aplikasi. Hasil ini tidak menyingkirkan semua penyakit; penilaian tetap perlu disesuaikan dengan gejala dan pemeriksaan dokter.";
+ } else if(/makanan|diet|makan|minum/.test(lower)){
+   answer="Pola makan seimbang umumnya membantu: perbanyak sayur dan buah sesuai kondisi, pilih sumber protein dan karbohidrat secukupnya, serta batasi garam, minuman manis, dan makanan ultra-proses. Jika ada penyakit ginjal, gangguan kalium, diabetes, atau pembatasan cairan, anjuran harus disesuaikan dengan hasil pemeriksaan dan arahan dokter.";
+ } else if(/kontrol|ulang|kapan/.test(lower)){
+   answer="Waktu kontrol bergantung pada jenis pemeriksaan, seberapa jauh nilainya dari rentang rujukan, gejala, dan penyakit yang menyertai. Bawa hasil lengkap beserta rentang rujukan laboratorium ke dokter yang merawat untuk menentukan waktu pemeriksaan ulang. Jangan menunda pertolongan jika muncul gejala berat atau memburuk.";
+ } else if(/ginjal|kreatinin|egfr|gfr/.test(lower)){
+   const c=res().find(x=>x.p[0]==="cr"), e=c?egfr(c.v,S.umur,S.sex):null;
+   answer=e!==null?"Kreatinin yang dimasukkan adalah "+c.v+" mg/dL dan estimasi eGFR aplikasi sekitar "+Math.round(e)+" mL/menit/1,73 m². Ini hanya perkiraan; eGFR perlu ditafsirkan bersama usia, kondisi klinis, albumin urine, dan hasil berulang. Satu nilai saja tidak cukup untuk menetapkan penyakit ginjal kronis. Bahas hasil dengan dokter.":"Untuk membantu menilai fungsi ginjal, masukkan nilai kreatinin serum dan usia. eGFR tetap merupakan perkiraan dan perlu ditafsirkan dokter bersama pemeriksaan urine serta kondisi klinis.";
+ } else {
+   answer="Fitur ini saat ini menyediakan panduan edukasi otomatis dasar, bukan layanan AI medis langsung. Saya belum dapat menilai pertanyaan khusus ini secara andal. Anda dapat meninjau penjelasan tiap parameter di atas dan membahas hasil dengan dokter. Jangan memasukkan nama lengkap, nomor identitas, alamat, atau informasi pribadi sensitif ke perangkat bersama.";
+ }
+ S.chat.push({role:"assistant",content:answer}); draw();
+}
+function draw(){const l=$("#log");if(!l)return;l.innerHTML="";S.chat.forEach(m=>{const d=document.createElement("div");d.className="m "+(m.role=="user"?"u":"a");d.textContent=m.content;l.appendChild(d)});l.scrollTop=l.scrollHeight}
+render();
+</script></body></html>
